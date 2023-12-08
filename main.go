@@ -1,17 +1,26 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
-	res, err := command(os.Args[1], os.Args[2])
-	if err != nil {
-		os.Exit(1)
+
+	for {
+		fmt.Print(">")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		array := strings.Split(scanner.Text(), ":")
+		res, err := command(array[0], array[1])
+		if err != nil {
+			os.Exit(1)
+		}
+		fmt.Println(res)
 	}
-	fmt.Println(res)
 }
 
 func command(subcommand string, data string) (string, error) {
