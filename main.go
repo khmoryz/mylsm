@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"mylsm/memtable"
 	"os"
 	"strings"
 )
@@ -24,14 +25,14 @@ func main() {
 func command(subcommand string, data string) error {
 	switch subcommand {
 	case "insert":
-		if err := Insert(data); err != nil {
+		if err := memtable.Insert(data); err != nil {
 			return err
 		}
 		fmt.Println("ok")
 		return nil
 	case "select":
-		res := Select(data)
-		fmt.Println(res.value, res.match)
+		res := memtable.Select(data)
+		fmt.Println(res.Value, res.Match)
 		return nil
 	}
 	return errors.New("undifined command")
