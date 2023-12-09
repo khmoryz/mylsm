@@ -33,10 +33,12 @@ func Insert(data string) error {
 }
 
 func Select(key string) Result {
-	for _, kv := range Memt.kvs {
-		if kv.key == key {
-			return Result{value: kv.value, match: true}
+	// Scan in reverse order (reason: because the latest value is appended at the end).
+	for i := len(Memt.kvs) - 1; i >= 0; i-- {
+		if Memt.kvs[i].key == key {
+			return Result{value: Memt.kvs[i].value, match: true}
 		}
+
 	}
 	return Result{value: "", match: false}
 }
