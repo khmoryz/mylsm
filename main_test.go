@@ -6,11 +6,10 @@ import (
 )
 
 func Test_command(t *testing.T) {
-	if err := command("insert", "key1=foo"); err != nil {
+	if err := command("put", "key1=foo"); err != nil {
 		fmt.Printf("Unexpected error")
 	}
-	if err := command("select", "key1"); err != nil {
-
+	if err := command("get", "key1"); err != nil {
 		fmt.Printf("Unexpected response")
 	}
 }
