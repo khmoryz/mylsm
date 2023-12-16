@@ -25,15 +25,6 @@ type Kv struct {
 	Value string
 }
 
-type SSTable struct {
-	kvs []kv
-}
-
-type kv struct {
-	key   string
-	value string
-}
-
 func genFileName() string {
 	now := time.Now().UnixNano()
 	return strconv.FormatInt(now, 10) + suffix
@@ -49,11 +40,11 @@ func Flush() error {
 	}
 
 	// sort
-	var sst SSTable
+	var sst Table
 	for i, v := range uniq {
-		sst.kvs = append(sst.kvs, kv{key: i, value: v})
+		sst.Kvs = append(sst.Kvs, Kv{Key: i, Value: v})
 	}
-	sort.Slice(sst.kvs, func(i, j int) bool { return sst.kvs[i].key < sst.kvs[j].key })
+	sort.Slice(sst.Kvs, func(i, j int) bool { return sst.Kvs[i].Key < sst.Kvs[j].Key })
 
 	// write
 	if err := os.MkdirAll(dirName, 0755); err != nil {
@@ -66,11 +57,11 @@ func Flush() error {
 	}
 	defer f.Close()
 
-	for _, v := range sst.kvs {
-		binary.Write(f, binary.LittleEndian, int32(len(v.key)))
-		f.Write([]byte(v.key))
-		binary.Write(f, binary.LittleEndian, int32(len(v.value)))
-		f.Write([]byte(v.value))
+	for _, v := range sst.Kvs {
+		binary.Write(f, binary.LittleEndian, int32(len(v.Key)))
+		f.Write([]byte(v.Key))
+		binary.Write(f, binary.LittleEndian, int32(len(v.Value)))
+		f.Write([]byte(v.Value))
 	}
 
 	// Initialization
