@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"mylsm/sstable"
+	"github.com/khmoryz/mylsm/sstable"
 	"os"
 	"testing"
 )

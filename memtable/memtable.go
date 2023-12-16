@@ -2,7 +2,7 @@ package memtable
 
 import (
 	"fmt"
-	st "mylsm/sstable"
+	st "github.com/khmoryz/mylsm/sstable"
 	"strings"
 )
 

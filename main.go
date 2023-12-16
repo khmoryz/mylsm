@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"mylsm/memtable"
+	"github.com/khmoryz/mylsm/memtable"
 	"os"
 	"strings"
 )

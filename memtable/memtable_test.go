@@ -2,7 +2,7 @@ package memtable
 
 import (
 	"math/rand"
-	"mylsm/sstable"
+	"github.com/khmoryz/mylsm/sstable"
 	"os"
 	"testing"
 )
