@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const dirName = "/tmp/mylsm/"
+const DirName = "/tmp/mylsm/"
 const suffix = "_sstable.mylsm"
 const maxSstableSize = 1000
 
@@ -45,11 +45,11 @@ func Flush() error {
 	sort.Slice(sst.Kvs, func(i, j int) bool { return sst.Kvs[i].Key < sst.Kvs[j].Key })
 
 	// write
-	if err := os.MkdirAll(dirName, 0755); err != nil {
+	if err := os.MkdirAll(DirName, 0755); err != nil {
 		panic(err)
 	}
 
-	f, err := os.OpenFile(dirName+genFileName(), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
+	f, err := os.OpenFile(DirName+genFileName(), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +69,7 @@ func Flush() error {
 }
 
 func getSstableList() []fs.DirEntry {
-	f, err := os.Open(dirName)
+	f, err := os.Open(DirName)
 	if err != nil {
 		panic(err)
 	}
@@ -84,7 +84,7 @@ func getSstableList() []fs.DirEntry {
 func Search(searchKey string) (string, bool) {
 	for _, s := range getSstableList() {
 
-		f, err := os.Open(dirName + s.Name())
+		f, err := os.Open(DirName + s.Name())
 		if err != nil {
 			panic(err)
 		}

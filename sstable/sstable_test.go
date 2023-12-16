@@ -7,7 +7,7 @@ import (
 
 func TestFlushAndSearch(t *testing.T) {
 	// clean up
-	os.RemoveAll(dirName)
+	os.RemoveAll(DirName)
 
 	// set dummy data
 	Memt.Kvs = []Kv{
@@ -29,7 +29,7 @@ func TestFlushAndSearch(t *testing.T) {
 
 func TestDoubleFlushAndSearch(t *testing.T) {
 	// clean up
-	os.RemoveAll(dirName)
+	os.RemoveAll(DirName)
 
 	// set first dummy data
 	Memt.Kvs = []Kv{
