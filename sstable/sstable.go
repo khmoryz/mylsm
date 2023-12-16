@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"io"
 	"io/fs"
-	"mylsm/memtable"
 	"os"
 	"sort"
 	"strconv"
@@ -14,6 +13,17 @@ import (
 const dirName = "/tmp/mylsm/"
 const suffix = "_sstable.mylsm"
 const maxSstableSize = 1000
+
+var Memt Table
+
+type Table struct {
+	Kvs []Kv
+}
+
+type Kv struct {
+	Key   string
+	Value string
+}
 
 type SSTable struct {
 	kvs []kv
@@ -34,7 +44,7 @@ func Flush() error {
 
 	// uniq
 	uniq := make(map[string]string, 0)
-	for _, k := range memtable.Memt.Kvs {
+	for _, k := range Memt.Kvs {
 		uniq[k.Key] = k.Value
 	}
 
@@ -46,7 +56,6 @@ func Flush() error {
 	sort.Slice(sst.kvs, func(i, j int) bool { return sst.kvs[i].key < sst.kvs[j].key })
 
 	// write
-
 	if err := os.MkdirAll(dirName, 0755); err != nil {
 		panic(err)
 	}
@@ -63,6 +72,9 @@ func Flush() error {
 		binary.Write(f, binary.LittleEndian, int32(len(v.value)))
 		f.Write([]byte(v.value))
 	}
+
+	// Initialization
+	Memt = Table{}
 
 	return nil
 }

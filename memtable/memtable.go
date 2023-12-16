@@ -2,19 +2,11 @@ package memtable
 
 import (
 	"fmt"
+	st "mylsm/sstable"
 	"strings"
 )
 
-var Memt Memtable
-
-type Memtable struct {
-	Kvs []Kv
-}
-
-type Kv struct {
-	Key   string
-	Value string
-}
+var memtMax = 3
 
 type Result struct {
 	Value string
@@ -27,18 +19,31 @@ func Insert(data string) error {
 		err := fmt.Errorf("unexpected insert value:%s", data)
 		return err
 	}
-	kv := Kv{Key: d[0], Value: d[1]}
-	Memt.Kvs = append(Memt.Kvs, kv)
+	kv := st.Kv{Key: d[0], Value: d[1]}
+	st.Memt.Kvs = append(st.Memt.Kvs, kv)
+
+	// Flush to sstable.
+	if len(st.Memt.Kvs) >= memtMax {
+		if err := st.Flush(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func Select(key string) Result {
 	// Scan in reverse order (reason: because the latest value is appended at the end).
-	for i := len(Memt.Kvs) - 1; i >= 0; i-- {
-		if Memt.Kvs[i].Key == key {
-			return Result{Value: Memt.Kvs[i].Value, Match: true}
+	for i := len(st.Memt.Kvs) - 1; i >= 0; i-- {
+		if st.Memt.Kvs[i].Key == key {
+			return Result{Value: st.Memt.Kvs[i].Value, Match: true}
 		}
-
 	}
+
+	// Search sstable.
+	if v, m := st.Read("key"); m {
+		return Result{Value: v, Match: m}
+	}
+
 	return Result{Value: "", Match: false}
 }

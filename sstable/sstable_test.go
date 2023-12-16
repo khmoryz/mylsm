@@ -1,7 +1,6 @@
 package sstable
 
 import (
-	"mylsm/memtable"
 	"os"
 	"testing"
 )
@@ -11,7 +10,7 @@ func TestFlushAndRead(t *testing.T) {
 	os.RemoveAll(dirName)
 
 	// set dummy data
-	memtable.Memt.Kvs = []memtable.Kv{
+	Memt.Kvs = []Kv{
 		{Key: "a", Value: "foo"},
 		{Key: "c", Value: "bar"},
 		{Key: "b", Value: "buzz"},
@@ -33,7 +32,7 @@ func TestDoubleFlushAndRead(t *testing.T) {
 	os.RemoveAll(dirName)
 
 	// set first dummy data
-	memtable.Memt.Kvs = []memtable.Kv{
+	Memt.Kvs = []Kv{
 		{Key: "a", Value: "foo"},
 		{Key: "c", Value: "bar"},
 		{Key: "b", Value: "buzz"},
@@ -44,7 +43,7 @@ func TestDoubleFlushAndRead(t *testing.T) {
 	Flush()
 
 	// set first dummy data
-	memtable.Memt.Kvs = []memtable.Kv{
+	Memt.Kvs = []Kv{
 		{Key: "x", Value: "foo"},
 		{Key: "y", Value: "bar"},
 		{Key: "z", Value: "buzz"},
