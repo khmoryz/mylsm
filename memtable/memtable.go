@@ -41,7 +41,7 @@ func Get(key string) Result {
 	}
 
 	// Search sstable.
-	if v, m := st.Search("key"); m {
+	if v, m := st.Search(key); m {
 		return Result{Value: v, Match: m}
 	}
 
