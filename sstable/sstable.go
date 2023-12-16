@@ -31,8 +31,6 @@ func genFileName() string {
 }
 
 func Flush() error {
-	//TODO: memtable exclusive control
-
 	// uniq
 	uniq := make(map[string]string, 0)
 	for _, k := range Memt.Kvs {
@@ -66,7 +64,7 @@ func Flush() error {
 
 	// Initialization
 	Memt = Table{}
-
+	
 	return nil
 }
 
