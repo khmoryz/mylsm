@@ -92,7 +92,7 @@ func getSstableList() []fs.DirEntry {
 }
 
 // TODO: [portability] Depends on OS behavior that file order is ordered by desc.
-func Read(searchKey string) (string, bool) {
+func Search(searchKey string) (string, bool) {
 	for _, s := range getSstableList() {
 
 		f, err := os.Open(dirName + s.Name())

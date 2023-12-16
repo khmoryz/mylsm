@@ -4,20 +4,20 @@ import (
 	"testing"
 )
 
-func TestInsertAndSelect(t *testing.T) {
-	Insert("key=foo")
-	if res := Select("key"); res.Value != "foo" {
+func TestPutAndGet(t *testing.T) {
+	Put("key=foo")
+	if res := Get("key"); res.Value != "foo" {
 		t.Errorf("unexpected value:%s", res.Value)
 	}
 }
 
 func TestUpdate(t *testing.T) {
-	Insert("key=foo")
-	if res := Select("key"); res.Value != "foo" {
+	Put("key=foo")
+	if res := Get("key"); res.Value != "foo" {
 		t.Errorf("unexpected value:%s", res.Value)
 	}
-	Insert("key=bar")
-	if res := Select("key"); res.Value != "bar" {
+	Put("key=bar")
+	if res := Get("key"); res.Value != "bar" {
 		t.Errorf("unexpected value:%s", res.Value)
 	}
 }

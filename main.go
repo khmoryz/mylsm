@@ -25,13 +25,13 @@ func main() {
 func command(subcommand string, data string) error {
 	switch subcommand {
 	case "put":
-		if err := memtable.Insert(data); err != nil {
+		if err := memtable.Put(data); err != nil {
 			return err
 		}
 		fmt.Println("ok")
 		return nil
 	case "get":
-		res := memtable.Select(data)
+		res := memtable.Get(data)
 		fmt.Println(res.Value, res.Match)
 		return nil
 	}

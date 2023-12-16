@@ -13,7 +13,7 @@ type Result struct {
 	Match bool
 }
 
-func Insert(data string) error {
+func Put(data string) error {
 	d := strings.Split(data, "=")
 	if len(d) != 2 {
 		err := fmt.Errorf("unexpected insert value:%s", data)
@@ -32,7 +32,7 @@ func Insert(data string) error {
 	return nil
 }
 
-func Select(key string) Result {
+func Get(key string) Result {
 	// Scan in reverse order (reason: because the latest value is appended at the end).
 	for i := len(st.Memt.Kvs) - 1; i >= 0; i-- {
 		if st.Memt.Kvs[i].Key == key {
@@ -41,7 +41,7 @@ func Select(key string) Result {
 	}
 
 	// Search sstable.
-	if v, m := st.Read("key"); m {
+	if v, m := st.Search("key"); m {
 		return Result{Value: v, Match: m}
 	}
 

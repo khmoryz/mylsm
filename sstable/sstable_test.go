@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestFlushAndRead(t *testing.T) {
+func TestFlushAndSearch(t *testing.T) {
 	// clean up
 	os.RemoveAll(dirName)
 
@@ -21,13 +21,13 @@ func TestFlushAndRead(t *testing.T) {
 	Flush()
 
 	// check
-	v, exist := Read("a")
+	v, exist := Search("a")
 	if v != "foo_updated" && exist != true {
 		t.Errorf("unexpected value: %s, exist: %t", v, exist)
 	}
 }
 
-func TestDoubleFlushAndRead(t *testing.T) {
+func TestDoubleFlushAndSearch(t *testing.T) {
 	// clean up
 	os.RemoveAll(dirName)
 
@@ -54,17 +54,17 @@ func TestDoubleFlushAndRead(t *testing.T) {
 	Flush()
 
 	// check
-	v, exist := Read("a")
+	v, exist := Search("a")
 	if v != "foo_updated" && exist != true {
 		t.Errorf("unexpected value: %s, exist: %t", v, exist)
 	}
 
-	v, exist = Read("x")
+	v, exist = Search("x")
 	if v != "foo" && exist != true {
 		t.Errorf("unexpected value: %s, exist: %t", v, exist)
 	}
 
-	v, exist = Read("b")
+	v, exist = Search("b")
 	if v != "buzz_updated_in_the_second" && exist != true {
 		t.Errorf("unexpected value: %s, exist: %t", v, exist)
 	}
