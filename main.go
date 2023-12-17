@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/khmoryz/mylsm/memtable"
 	"os"
 	"strings"
+
+	"github.com/khmoryz/mylsm/memtable"
 )
 
 func main() {
@@ -33,6 +34,11 @@ func command(subcommand string, data string) error {
 	case "get":
 		res := memtable.Get(data)
 		fmt.Println(res.Value, res.Match)
+		return nil
+	case "del":
+		if err := memtable.Delete(data); err != nil {
+			return err
+		}
 		return nil
 	}
 	return errors.New("undifined command")

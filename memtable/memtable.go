@@ -2,8 +2,9 @@ package memtable
 
 import (
 	"fmt"
-	st "github.com/khmoryz/mylsm/sstable"
 	"strings"
+
+	st "github.com/khmoryz/mylsm/sstable"
 )
 
 var memtMax = 3
@@ -46,4 +47,19 @@ func Get(key string) Result {
 	}
 
 	return Result{Value: "", Match: false}
+}
+
+// note: [design decisions] The existence of the key is not checkd. This is because Get is expensive in LSM-Tree.
+func Delete(key string) error {
+	kv := st.Kv{Key: key, TombStone: true}
+	st.Memt.Kvs = append(st.Memt.Kvs, kv)
+
+	// Flush to sstable.
+	if len(st.Memt.Kvs) >= memtMax {
+		if err := st.Flush(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

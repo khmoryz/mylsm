@@ -23,6 +23,7 @@ type Table struct {
 type Kv struct {
 	Key   string
 	Value string
+	TombStone bool
 }
 
 func genFileName() string {
@@ -60,6 +61,7 @@ func Flush() error {
 		f.Write([]byte(v.Key))
 		binary.Write(f, binary.LittleEndian, int32(len(v.Value)))
 		f.Write([]byte(v.Value))
+		binary.Write(f, binary.LittleEndian, v.TombStone)
 	}
 
 	// Initialization
@@ -118,12 +120,23 @@ func Search(searchKey string) (string, bool) {
 				panic(err)
 			}
 
+			// Read tombstone
+			var ts bool
+			if err := binary.Read(f, binary.LittleEndian, &ts); err != nil {
+				if err == io.EOF {
+					break
+				}
+				panic(err)
+			}
+
 			// compare
-			if string(k) == searchKey {
+			if string(k) == searchKey && !ts {
 				return string(v), true
+			}
+			if string(k) == searchKey && ts {
+				return "", false
 			}
 		}
 	}
-
 	return "", false
 }

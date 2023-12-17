@@ -31,6 +31,24 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
+func TestDeleteAndPut(t *testing.T) {
+	// clean up
+	os.RemoveAll(sstable.DirName)
+
+	Put("key=foo")
+	if res := Get("key"); res.Value != "foo" {
+		t.Errorf("unexpected value:%s", res.Value)
+	}
+	Delete("key")
+	if res := Get("key"); res.Value != "" && !res.Match {
+		t.Errorf("unexpected value:%s", res.Value)
+	}
+	Put("key=bar")
+	if res := Get("key"); res.Value != "bar" {
+		t.Errorf("unexpected value:%s", res.Value)
+	}
+}
+
 // note: Hight Cost.
 func TestComplex(t *testing.T) {
 	// clean up
