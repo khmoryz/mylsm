@@ -39,6 +39,7 @@ func command(subcommand string, data string) error {
 		if err := memtable.Delete(data); err != nil {
 			return err
 		}
+		fmt.Println("ok")
 		return nil
 	}
 	return errors.New("undifined command")
