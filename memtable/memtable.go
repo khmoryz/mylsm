@@ -25,7 +25,7 @@ func Put(data string) error {
 
 	// Flush to sstable.
 	if len(st.Memt.Kvs) >= memtMax {
-		if err := st.Flush(); err != nil {
+		if err := st.Flush(&st.Memt); err != nil {
 			return err
 		}
 	}
@@ -56,7 +56,7 @@ func Delete(key string) error {
 
 	// Flush to sstable.
 	if len(st.Memt.Kvs) >= memtMax {
-		if err := st.Flush(); err != nil {
+		if err := st.Flush(&st.Memt); err != nil {
 			return err
 		}
 	}

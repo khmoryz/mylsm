@@ -18,7 +18,7 @@ func TestFlushAndSearch(t *testing.T) {
 	}
 
 	// execute
-	Flush()
+	Flush(&Memt)
 
 	// check
 	v, exist := Search("a")
@@ -40,7 +40,7 @@ func TestDoubleFlushAndSearch(t *testing.T) {
 	}
 
 	// execute
-	Flush()
+	Flush(&Memt)
 
 	// set first dummy data
 	Memt.Kvs = []Kv{
@@ -51,7 +51,7 @@ func TestDoubleFlushAndSearch(t *testing.T) {
 	}
 
 	// execute
-	Flush()
+	Flush(&Memt)
 
 	// check
 	v, exist := Search("a")
