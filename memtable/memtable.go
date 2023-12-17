@@ -37,7 +37,7 @@ func Get(key string) Result {
 	// Scan in reverse order (reason: because the latest value is appended at the end).
 	for i := len(st.Memt.Kvs) - 1; i >= 0; i-- {
 		if st.Memt.Kvs[i].Key == key {
-			return Result{Value: st.Memt.Kvs[i].Value, Match: true}
+			return Result{Value: st.Memt.Kvs[i].Value, Match: !st.Memt.Kvs[i].TombStone}
 		}
 	}
 

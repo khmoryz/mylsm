@@ -48,15 +48,15 @@ func Flush(t *Table) error {
 
 func Write(t *Table) error {
 	// uniq
-	uniq := make(map[string]string, 0)
+	uniq := make(map[string]Kv, 0)
 	for _, k := range t.Kvs {
-		uniq[k.Key] = k.Value
+		uniq[k.Key] = Kv{Key: k.Key, Value: k.Value, TombStone: k.TombStone}
 	}
 
 	// sort
 	var sst Table
-	for i, v := range uniq {
-		sst.Kvs = append(sst.Kvs, Kv{Key: i, Value: v})
+	for _, v := range uniq {
+		sst.Kvs = append(sst.Kvs, Kv{Key: v.Key, Value: v.Value, TombStone: v.TombStone})
 	}
 	sort.Slice(sst.Kvs, func(i, j int) bool { return sst.Kvs[i].Key < sst.Kvs[j].Key })
 
@@ -136,11 +136,8 @@ func Search(searchKey string) (string, bool) {
 			}
 
 			// compare
-			if string(k) == searchKey && !ts {
-				return string(v), true
-			}
-			if string(k) == searchKey && ts {
-				return "", false
+			if string(k) == searchKey {
+				return string(v), !ts
 			}
 		}
 	}
