@@ -86,22 +86,35 @@ func rotateL(node *AVLNode) *AVLNode {
 	return newRoot
 }
 
+func rotateR(node *AVLNode) *AVLNode {
+	newRoot := node.Lhs
+	node.Lhs = node.Lhs.Rhs
+	newRoot.Rhs = node
+
+	setHeight(newRoot.Rhs)
+	setHeight(newRoot)
+	return newRoot
+}
+
 func rebalance(node *AVLNode) *AVLNode {
 	if isBalanced(node) {
 		return node
 	}
 	if isLHeavy(node) {
-		//TODO
-		fmt.Println("Unimplemented!")
-		return nil
+		if bias(node) == 2 && bias(node.Lhs) == -1 {
+			node.Lhs = rotateL(node.Lhs)
+			r := rotateR(node)
+			return r
+		}
 	} else {
 		if bias(node) == -2 && bias(node.Rhs) == -1 {
 			r := rotateL(node)
 			return r
 		}
-			fmt.Println("Unimplemented 2!")
-			return nil
+		fmt.Println("Unimplemented!")
+		return nil
 	}
+	panic("something wrong")
 }
 
 func Print(root *AVLNode, indent int) {
