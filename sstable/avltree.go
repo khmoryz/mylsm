@@ -41,9 +41,9 @@ func Insert(node *AVLNode, key string) *AVLNode {
 	}
 
 	setHeight(node)
-	hoge := rebalance(node)
+	r := rebalance(node)
 
-	return hoge
+	return r
 }
 
 func isBalanced(node *AVLNode) bool {
