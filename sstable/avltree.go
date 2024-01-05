@@ -63,7 +63,7 @@ func isLHeavy(node *AVLNode) bool {
 	if node.Rhs == nil {
 		return node.Lhs.Height == 1
 	}
-	return node.Lhs.Height-node.Rhs.Height > 2
+	return node.Lhs.Height-node.Rhs.Height >= 2
 }
 
 func bias(node *AVLNode) int {
@@ -99,8 +99,9 @@ func rebalance(node *AVLNode) *AVLNode {
 			r := rotateL(node)
 			return r
 		}
+			fmt.Println("Unimplemented 2!")
+			return nil
 	}
-	panic("tmp")
 }
 
 func Print(root *AVLNode, indent int) {
