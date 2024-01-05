@@ -15,6 +15,12 @@ const suffix = "_sstable.mylsm"
 const maxSstableSize = 1000
 const compactionThreshold = 10
 
+// File format of SSTable
+// 　↓ Root node
+// ┌────────────┬─────┬──────────────┬───────┬──────────────────┬───────────────────┬───────────────
+// │ Key Length │ Key │ Value Length │ Value │ Left hand offset │ Right hand offset │ Key Length...
+// └────────────┴─────┴──────────────┴───────┴──────────────────┴───────────────────┴───────────────
+
 var Memt Table
 
 type Table struct {
@@ -25,6 +31,16 @@ type Kv struct {
 	Key       string
 	Value     string
 	TombStone bool
+}
+
+type node struct {
+	key string
+	value string
+	tombstone bool
+	lhsOffset int
+	lhs *node
+	rhsOffset int
+	rhs *node
 }
 
 func genFileName() string {
@@ -59,6 +75,8 @@ func Write(t *Table) error {
 		sst.Kvs = append(sst.Kvs, Kv{Key: v.Key, Value: v.Value, TombStone: v.TombStone})
 	}
 	sort.Slice(sst.Kvs, func(i, j int) bool { return sst.Kvs[i].Key < sst.Kvs[j].Key })
+
+	// generate binary tree
 
 	// write
 	if err := os.MkdirAll(DirName, 0755); err != nil {

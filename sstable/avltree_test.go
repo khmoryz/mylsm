@@ -7,15 +7,46 @@ import (
 	"testing"
 )
 
-func TestRHeavy(t *testing.T) {
-	cap := 10
-	root := Insert(nil, "1")
-	for i := 2; i < cap; i++ {
-		fmt.Printf("=== Insert %d ===\n", i)
-		root = Insert(root, strconv.Itoa(i))
-		Print(root, 0)
-	}
+func TestL(t *testing.T) {
+
+	// tree structure:
+	//      1
+	//       \
+	//        2
+
+	root := &AVLNode{Key: "1", Height: 2, Lhs: &AVLNode{Key: "2", Height: 1}}
+	fmt.Println("=== Default status ===")
+	Print(root, 0)
+	fmt.Println("=== Insert 3 ===")
+	root = Insert(root, "3")
+
+	// expected tree structure:
+	//      2
+	//     / \
+	//    1   3
+	Print(root, 0)
 }
+
+func TestR(t *testing.T) {
+
+	// tree structure:
+	//      3
+	//     /
+	//    2
+
+	root := &AVLNode{Key: "3", Height: 2, Lhs: &AVLNode{Key: "2", Height: 1}}
+	fmt.Println("=== Default status ===")
+	Print(root, 0)
+	fmt.Println("=== Insert 1 ===")
+	root = Insert(root, "1")
+
+	// expected tree structure:
+	//      2
+	//     / \
+	//    1   3
+	Print(root, 0)
+}
+
 
 func TestLR(t *testing.T) {
 
@@ -68,33 +99,11 @@ func TestRL(t *testing.T) {
 	Print(root, 0)
 }
 
-func TestR(t *testing.T) {
-
-	// tree structure:
-	//      3
-	//     /
-	//    2
-
-	root := &AVLNode{Key: "3", Height: 2, Lhs: &AVLNode{Key: "2", Height: 1}}
-	fmt.Println("=== Default status ===")
-	Print(root, 0)
-	fmt.Println("=== Insert 1 ===")
-	root = Insert(root, "1")
-
-	// expected tree structure:
-	//      2
-	//     / \
-	//    1   3
-	Print(root, 0)
-}
-
 func TestRandomInsert(t *testing.T) {
 	cap := 30
 	root := Insert(nil, strconv.Itoa(rand.Int()))
 	for i := 0; i < cap; i++ {
 		root = Insert(root, strconv.Itoa(rand.Int()))
-		Print(root, 0)
-		fmt.Println("=======")
 	}
 	Print(root, 0)
 }
