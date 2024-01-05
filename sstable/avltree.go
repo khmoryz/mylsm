@@ -111,12 +111,16 @@ func rebalance(node *AVLNode) *AVLNode {
 			return r
 		}
 	} else {
-		// Here is ritht heavy branch.
+		// Here is rigtht heavy branch.
 		if bias(node) == -2 && bias(node.Rhs) == -1 {
 			r := rotateL(node)
 			return r
 		}
-		fmt.Println("Unimplemented!")
+		if bias(node) == -2 && bias(node.Rhs) == 1 {
+			node.Rhs = rotateR(node.Rhs)
+			r := rotateL(node)
+			return r
+		}
 		return nil
 	}
 	panic("something wrong")

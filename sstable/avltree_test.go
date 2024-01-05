@@ -42,6 +42,32 @@ func TestLR(t *testing.T) {
 	Print(root, 0)
 }
 
+func TestRL(t *testing.T) {
+
+	// default tree structure:
+	//
+	//      3
+	//     / \
+	//    2   6
+	//       / \
+	//      5   7
+
+	root := &AVLNode{Key: "3", Height: 3, Lhs: &AVLNode{Key: "2", Height: 1}, Rhs: &AVLNode{Key: "6", Height: 2, Lhs: &AVLNode{Key: "5", Height: 1}, Rhs: &AVLNode{Key: "7", Height: 1}}}
+	fmt.Println("=== Default status ===")
+	Print(root, 0)
+	fmt.Println("=== Insert 4 ===")
+	root = Insert(root, "4")
+
+	// expected tree structure:
+	//      5
+	//     / \
+	//    3   6
+	//   / \   \
+	//  2   4   7
+
+	Print(root, 0)
+}
+
 func TestR(t *testing.T) {
 
 	// tree structure:
