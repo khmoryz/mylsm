@@ -61,7 +61,7 @@ func isLHeavy(node *AVLNode) bool {
 		return false
 	}
 	if node.Rhs == nil {
-		return node.Lhs.Height == 1
+		return node.Lhs.Height >= 1
 	}
 	return node.Lhs.Height-node.Rhs.Height >= 2
 }
@@ -106,7 +106,12 @@ func rebalance(node *AVLNode) *AVLNode {
 			r := rotateR(node)
 			return r
 		}
+		if bias(node) == 2 && bias(node.Lhs) == 1 {
+			r := rotateR(node)
+			return r
+		}
 	} else {
+		// Here is ritht heavy branch.
 		if bias(node) == -2 && bias(node.Rhs) == -1 {
 			r := rotateL(node)
 			return r
