@@ -1,5 +1,7 @@
 package sstable
 
+// Node: Implemented for SStable indexing but not needed, will be used for Memtable.
+
 import (
 	"fmt"
 	"math/rand"
