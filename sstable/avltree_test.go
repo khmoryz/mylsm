@@ -25,6 +25,10 @@ func TestL(t *testing.T) {
 	//     / \
 	//    1   3
 	Print(root, 0)
+
+	if root.Rhs.Key != "3" {
+		t.Errorf("Actual key is %s, expected 3", root.Rhs.Key)
+	}
 }
 
 func TestR(t *testing.T) {
@@ -45,8 +49,10 @@ func TestR(t *testing.T) {
 	//     / \
 	//    1   3
 	Print(root, 0)
+	if root.Rhs.Key != "3" {
+		t.Errorf("Actual key is %s, expected 3", root.Rhs.Key)
+	}
 }
-
 
 func TestLR(t *testing.T) {
 
@@ -71,6 +77,9 @@ func TestLR(t *testing.T) {
 	//  2   5   7
 
 	Print(root, 0)
+	if root.Key != "4" {
+		t.Errorf("Actual key is %s, expected 4", root.Key)
+	}
 }
 
 func TestRL(t *testing.T) {
@@ -96,6 +105,19 @@ func TestRL(t *testing.T) {
 	//   / \   \
 	//  2   4   7
 
+	Print(root, 0)
+
+	if root.Key != "5" {
+		t.Errorf("Actual key is %s, expected 5", root.Key)
+	}
+}
+
+func TestIncrementalInsert(t *testing.T) {
+	cap := 30
+	root := Insert(nil, "1")
+	for i := 2; i < cap; i++ {
+		root = Insert(root, strconv.Itoa(i))
+	}
 	Print(root, 0)
 }
 
