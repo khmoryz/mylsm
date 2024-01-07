@@ -33,16 +33,6 @@ type Kv struct {
 	TombStone bool
 }
 
-type node struct {
-	key string
-	value string
-	tombstone bool
-	lhsOffset int
-	lhs *node
-	rhsOffset int
-	rhs *node
-}
-
 func genFileName() string {
 	now := time.Now().UnixNano()
 	return strconv.FormatInt(now, 10) + suffix
