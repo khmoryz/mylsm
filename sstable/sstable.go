@@ -14,12 +14,16 @@ const DirName = "/tmp/mylsm/"
 const suffix = "_sstable.mylsm"
 const maxSstableSize = 1000
 const compactionThreshold = 10
+const blockSize = 1 * 1024
+
+var blockSeparator = []byte{0, 0, 0, 0}
 
 // File format of SSTable
-// 　↓ Root node
-// ┌────────────┬─────┬──────────────┬───────┬──────────────────┬───────────────────┬───────────────
-// │ Key Length │ Key │ Value Length │ Value │ Left hand offset │ Right hand offset │ Key Length...
-// └────────────┴─────┴──────────────┴───────┴──────────────────┴───────────────────┴───────────────
+// ↓offset=bockSize*0 (indexed)                      ↓offset=bockSize*1 (indexed)
+// ┌────────────┬─────┬──────────────┬───────┬─────┬────────────┬─────┬──────────────┬───────┬───────────┬────────────┬─────┬────────┬────────────┬─────┬───────────┬──────────────┐
+// │ Key Length │ Key │ Value Length │ Value │ ... │ Key Length │ Key │ Value Length │ Value │ Separator │ Key Length │ Key │ Offset │ Key Length │ ... │ Separator │ Index Offset │
+// └────────────┴─────┴──────────────┴───────┴─────┴────────────┴─────┴──────────────┴───────┴───────────┴────────────┴─────┴────────┴────────────┴─────┴───────────┴──────────────┘
+// └────────────────────────────────────── Data Block ───────────────────────────────────────┘           └─────────────── Partial Index ────────────────┘           └── Metadata ──┘
 
 var Memt Table
 
@@ -31,6 +35,11 @@ type Kv struct {
 	Key       string
 	Value     string
 	TombStone bool
+}
+
+type entry struct {
+	key    string
+	offset int64
 }
 
 func genFileName() string {
@@ -52,6 +61,14 @@ func Flush(t *Table) error {
 	return nil
 }
 
+func isBlockHead(cur int64, curBlock int, size int) bool {
+	return cur+int64(size) >= int64(blockSize*curBlock)
+}
+
+func calcByteSize(k Kv) int {
+	return 4 + len(k.Key) + 4 + len(k.Value)
+}
+
 func Write(t *Table) error {
 	// uniq
 	uniq := make(map[string]Kv, 0)
@@ -66,8 +83,6 @@ func Write(t *Table) error {
 	}
 	sort.Slice(sst.Kvs, func(i, j int) bool { return sst.Kvs[i].Key < sst.Kvs[j].Key })
 
-	// generate binary tree
-
 	// write
 	if err := os.MkdirAll(DirName, 0755); err != nil {
 		panic(err)
@@ -79,12 +94,32 @@ func Write(t *Table) error {
 	}
 	defer f.Close()
 
+	partialIndex := []entry{}
+
+	// write datablock
 	for _, v := range sst.Kvs {
+
+		// collect index
+		cur, _ := f.Seek(0, io.SeekCurrent)
+		if isBlockHead(cur, len(partialIndex), calcByteSize(v)) {
+			partialIndex = append(partialIndex, entry{key: v.Key, offset: cur})
+		}
+
 		binary.Write(f, binary.LittleEndian, int32(len(v.Key)))
 		f.Write([]byte(v.Key))
 		binary.Write(f, binary.LittleEndian, int32(len(v.Value)))
 		f.Write([]byte(v.Value))
 		binary.Write(f, binary.LittleEndian, v.TombStone)
+	}
+
+	// write separator
+	f.Write(blockSeparator)
+
+	// write index block
+	for _, v := range partialIndex {
+		binary.Write(f, binary.LittleEndian, int32(len(v.key)))
+		f.Write([]byte(v.key))
+		binary.Write(f, binary.LittleEndian, v.offset)
 	}
 
 	return nil
@@ -121,6 +156,12 @@ func Search(searchKey string) (string, bool) {
 				}
 				panic(err)
 			}
+
+			// end data block
+			if klen == 0 {
+				break
+			}
+
 			k := make([]byte, klen)
 			if _, err := f.Read(k); err != nil {
 				panic(err)

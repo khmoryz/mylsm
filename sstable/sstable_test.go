@@ -1,7 +1,9 @@
 package sstable
 
 import (
+	"math/rand"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -68,4 +70,18 @@ func TestDoubleFlushAndSearch(t *testing.T) {
 	if v != "buzz_updated_in_the_second" && exist != true {
 		t.Errorf("unexpected value: %s, exist: %t", v, exist)
 	}
+}
+
+func TestRandomWrite(t *testing.T) {
+	// clean up
+	os.RemoveAll(DirName)
+
+	// set random dummy data
+	cap := 100
+	for i := 0; i < cap; i++ {
+		Memt.Kvs = append(Memt.Kvs, Kv{Key: strconv.Itoa(rand.Int()), Value: strconv.Itoa(rand.Int())})
+	}
+
+	// execute
+	Flush(&Memt)
 }
