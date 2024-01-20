@@ -116,11 +116,18 @@ func Write(t *Table) error {
 	f.Write(blockSeparator)
 
 	// write index block
+	idxOfs, _ := f.Seek(0, io.SeekCurrent)
 	for _, v := range partialIndex {
 		binary.Write(f, binary.LittleEndian, int32(len(v.key)))
 		f.Write([]byte(v.key))
 		binary.Write(f, binary.LittleEndian, v.offset)
 	}
+
+	// write separator
+	f.Write(blockSeparator)
+
+	// write metadata block
+	binary.Write(f, binary.LittleEndian, int32(idxOfs))
 
 	return nil
 }
@@ -137,6 +144,10 @@ func getSstableList() []fs.DirEntry {
 	return e
 }
 
+// func getIndex(f *os.File) []entry {
+
+// }
+
 // TODO: [portability] Depends on OS behavior that file order is ordered by desc.
 func Search(searchKey string) (string, bool) {
 	for _, s := range getSstableList() {
@@ -148,6 +159,8 @@ func Search(searchKey string) (string, bool) {
 		defer f.Close()
 
 		for {
+			// idx:=getIndex()
+
 			// Read key
 			var klen int32
 			if err := binary.Read(f, binary.LittleEndian, &klen); err != nil {
